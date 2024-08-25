@@ -182,7 +182,7 @@ func markdownToConfluenceWiki(textToConvert string) string {
 	return string(output)
 }
 
-func formatCodeJiraTicket(jsonVuln jsn.Json, projectInfo jsn.Json, flags flags) *JiraIssue {
+func formatCodeJiraTicket(jsonVuln jsn.Json, projectInfo jsn.Json, flags flags, repo Repo) *JiraIssue {
 
 	issueData := jsonVuln.K("data")
 
@@ -227,6 +227,11 @@ func formatCodeJiraTicket(jsonVuln jsn.Json, projectInfo jsn.Json, flags flags) 
 			Description: descriptionBody,
 		},
 	}
+
+	// set the team and assignee if repo is found in appsec smdb
+	team := CustomField{Value: repo.TeamOwner}
+	jiraTicket.Fields.FeatureTeam = []CustomField{team}
+	jiraTicket.Fields.Assignees = &Assignee{Name: repo.Manager}
 
 	return jiraTicket
 }
