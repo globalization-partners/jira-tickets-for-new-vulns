@@ -19,8 +19,8 @@ func TestFormatJiraTicketFunc(t *testing.T) {
 
 	flags := flags{}
 	flags.optionalFlags.cveInTitle = true
-	repoMap := map[string]Repo{}
-	jiraTicket := formatJiraTicket(issueData, projectInfo, flags, repoMap)
+	repo := Repo{}
+	jiraTicket := formatJiraTicket(issueData, projectInfo, flags, repo)
 
 	// Convert jira ticket into a string
 	ticket := fmt.Sprintf("%v", jiraTicket)

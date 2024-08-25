@@ -63,7 +63,7 @@ func getJiraTicketId(responseData []byte) *JiraDetailForTicket {
 	return jiraIssueDetails
 }
 
-func formatJiraTicket(jsonVuln jsn.Json, projectInfo jsn.Json, flags flags, repoMap map[string]Repo) *JiraIssue {
+func formatJiraTicket(jsonVuln jsn.Json, projectInfo jsn.Json, flags flags, repo Repo) *JiraIssue {
 
 	issueData := jsonVuln.K("issueData")
 
@@ -163,12 +163,9 @@ func formatJiraTicket(jsonVuln jsn.Json, projectInfo jsn.Json, flags flags, repo
 	}
 
 	// set the team and assignee if repo is found in appsec smdb
-	val, ok := repoMap[projectInfo.K("remoteRepoUrl").String().Value]
-	if ok {
-		team := CustomField{Value: val.TeamOwner}
-		jiraTicket.Fields.FeatureTeam = []CustomField{team}
-		jiraTicket.Fields.Assignees = &Assignee{Name: val.Manager}
-	}
+	team := CustomField{Value: repo.TeamOwner}
+	jiraTicket.Fields.FeatureTeam = []CustomField{team}
+	jiraTicket.Fields.Assignees = &Assignee{Name: repo.Manager}
 
 	return jiraTicket
 }
