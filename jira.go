@@ -121,7 +121,8 @@ func openJiraTicket(flags flags, projectInfo jsn.Json, vulnForJira interface{}, 
 	} else if flags.mandatoryFlags.jiraProjectID != "" {
 		jiraTicket.Fields.Projects.ID = flags.mandatoryFlags.jiraProjectID
 	}
-
+	// overwite passed jira project key with AppSec CMDB value
+	jiraTicket.Fields.Projects.Key = repo.Backlog
 	jiraTicket.Fields.IssueTypes.Name = flags.optionalFlags.jiraTicketType
 
 	projectInfoId := projectInfo.K("id").String().Value
@@ -133,7 +134,16 @@ func openJiraTicket(flags flags, projectInfo jsn.Json, vulnForJira interface{}, 
 		return nil, nil, errors.New("Failure, Could not retrieve project ID"), endpoint
 	}
 
-	if flags.optionalFlags.labels != "" {
+	// Use AppSec spcecific labels if no labels passed
+	if flags.optionalFlags.labels == "" {
+		if issueType == "code" {
+			jiraTicket.Fields.Labels = []string{"security-sast"}
+		} else if flags.optionalFlags.issueType == "license" {
+			jiraTicket.Fields.Labels = []string{"security-license"}
+		} else {
+			jiraTicket.Fields.Labels = []string{"security-sca"}
+		}
+	} else {
 		jiraTicket.Fields.Labels = strings.Split(flags.optionalFlags.labels, ",")
 	}
 
