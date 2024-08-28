@@ -47,8 +47,9 @@ func TestFormatCodeTicketFunc(t *testing.T) {
 
 	projectInfo, _ := jsn.NewJson(readFixture("./fixtures/project.json"))
 	data, _ := jsn.NewJson(readFixture("./fixtures/snyk_code_fixtures/snykCodeIssueAllDetailsForJiraForTicketTest.json"))
+	repo := Repo{}
 
-	jiraTicket := formatCodeJiraTicket(data, projectInfo, flags)
+	jiraTicket := formatCodeJiraTicket(data, projectInfo, flags, repo)
 
 	// Convert jira ticket into a string
 	ticket := fmt.Sprintf("%v", jiraTicket)
@@ -118,8 +119,8 @@ func TestOpenJiraTicketCodeOnly(t *testing.T) {
 	cD.setDebug(false)
 
 	CreateLogFile(cD, "ErrorsFile_")
-	repoMap := map[string]Repo{}
-	responseDataAggregatedByte, ticket, err, jiraApiUrl := openJiraTicket(flags, projectInfo, codeIssueForJira, repoMap, cD)
+	repo := Repo{}
+	responseDataAggregatedByte, ticket, err, jiraApiUrl := openJiraTicket(flags, projectInfo, codeIssueForJira, repo, cD)
 
 	fmt.Println(responseDataAggregatedByte, ticket, err, jiraApiUrl)
 

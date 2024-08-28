@@ -95,7 +95,7 @@ create a ticket for a specific vuln
 
 **
 */
-func openJiraTicket(flags flags, projectInfo jsn.Json, vulnForJira interface{}, repoMap map[string]Repo, customDebug debug) ([]byte, *Tickets, error, string) {
+func openJiraTicket(flags flags, projectInfo jsn.Json, vulnForJira interface{}, repo Repo, customDebug debug) ([]byte, *Tickets, error, string) {
 
 	jsonVuln, _ := jsn.NewJson(vulnForJira)
 	issueType := jsonVuln.K("data").K("attributes").K("issueType").String().Value
@@ -105,10 +105,10 @@ func openJiraTicket(flags flags, projectInfo jsn.Json, vulnForJira interface{}, 
 	var jiraTicket *JiraIssue
 
 	if issueType == "code" {
-		jiraTicket = formatCodeJiraTicket(jsonVuln, projectInfo, flags)
+		jiraTicket = formatCodeJiraTicket(jsonVuln, projectInfo, flags, repo)
 		vulnID = jsonVuln.K("data").K("id").String().Value
 	} else {
-		jiraTicket = formatJiraTicket(jsonVuln, projectInfo, flags, repoMap)
+		jiraTicket = formatJiraTicket(jsonVuln, projectInfo, flags, repo)
 	}
 
 	if len(vulnID) == 0 {
@@ -121,7 +121,8 @@ func openJiraTicket(flags flags, projectInfo jsn.Json, vulnForJira interface{}, 
 	} else if flags.mandatoryFlags.jiraProjectID != "" {
 		jiraTicket.Fields.Projects.ID = flags.mandatoryFlags.jiraProjectID
 	}
-
+	// overwite passed jira project key with AppSec CMDB value
+	jiraTicket.Fields.Projects.Key = repo.Backlog
 	jiraTicket.Fields.IssueTypes.Name = flags.optionalFlags.jiraTicketType
 
 	projectInfoId := projectInfo.K("id").String().Value
@@ -133,7 +134,16 @@ func openJiraTicket(flags flags, projectInfo jsn.Json, vulnForJira interface{}, 
 		return nil, nil, errors.New("Failure, Could not retrieve project ID"), endpoint
 	}
 
-	if flags.optionalFlags.labels != "" {
+	// Use AppSec spcecific labels if no labels passed
+	if flags.optionalFlags.labels == "" {
+		if issueType == "code" {
+			jiraTicket.Fields.Labels = []string{"security-sast"}
+		} else if flags.optionalFlags.issueType == "license" {
+			jiraTicket.Fields.Labels = []string{"security-license"}
+		} else {
+			jiraTicket.Fields.Labels = []string{"security-sca"}
+		}
+	} else {
 		jiraTicket.Fields.Labels = strings.Split(flags.optionalFlags.labels, ",")
 	}
 
@@ -254,6 +264,12 @@ func openJiraTickets(flags flags, projectInfo jsn.Json, vulnsForJira map[string]
 
 	for _, vulnForJira := range vulnsForJira {
 		jsonVuln, _ := jsn.NewJson(vulnForJira)
+		repo, ok := repoMap[projectInfo.K("remoteRepoUrl").String().Value]
+		if !ok {
+			message := fmt.Sprintf("Skipping creating ticket for %s because repo is not found in AppSec CMDB.", jsonVuln.K("issueData").K("title").String().Value)
+			fullListNotCreatedIssue += displayErrorForIssue(vulnForJira, "ifRepoInAppSecCMDBOnly", errors.New(message), "", customDebug)
+			continue
+		}
 
 		// determine if is code issue
 		issueType := jsonVuln.K("data").K("attributes").K("issueType").String().Value
@@ -277,7 +293,7 @@ func openJiraTickets(flags flags, projectInfo jsn.Json, vulnsForJira map[string]
 		RequestFailed = false
 
 		customDebug.Debug("*** INFO *** Trying to open ticket for vuln:", jsonVuln.K("issueData").K("title").String().Value)
-		responseDataAggregatedByte, ticket, err, jiraApiUrl := openJiraTicket(flags, projectInfo, vulnForJira, repoMap, customDebug)
+		responseDataAggregatedByte, ticket, err, jiraApiUrl := openJiraTicket(flags, projectInfo, vulnForJira, repo, customDebug)
 		if err != nil {
 			message := fmt.Sprintf("*** ERROR *** Failed to open a Jira ticket via Snyk API: %s\nERROR:%s", jiraApiUrl, err)
 			writeErrorFile("openJiraTickets", message, customDebug)
@@ -294,7 +310,7 @@ func openJiraTickets(flags flags, projectInfo jsn.Json, vulnsForJira map[string]
 					customDebug.Debug("*** INFO *** Retrying with priorityIsSeverity set to false, max retries=", MaxNumberOfRetry)
 
 					flags.optionalFlags.priorityIsSeverity = false
-					responseDataAggregatedByte, ticket, err, jiraApiUrl = openJiraTicket(flags, projectInfo, vulnForJira, repoMap, customDebug)
+					responseDataAggregatedByte, ticket, err, jiraApiUrl = openJiraTicket(flags, projectInfo, vulnForJira, repo, customDebug)
 					if err != nil {
 						fullListNotCreatedIssue += displayErrorForIssue(vulnForJira, "api", err, jiraApiUrl, customDebug)
 					} else {
