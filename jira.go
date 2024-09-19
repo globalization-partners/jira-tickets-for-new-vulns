@@ -171,11 +171,15 @@ func openJiraTicket(flags flags, projectInfo jsn.Json, vulnForJira interface{}, 
 			priority.Name = val
 		} else {
 			if severity == "critical" {
-				priority.Name = "Highest"
+				priority.Name = "Highest (1)"
+			} else if severity == "high" {
+				priority.Name = "High (2)"
+			} else if severity == "medium" {
+				priority.Name = "Normal (3)"
+			} else if severity == "low" {
+				priority.Name = "Low (4)"
 			} else {
-
 				priority.Name = strings.Title(severity)
-
 			}
 
 		}

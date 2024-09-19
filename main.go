@@ -7,24 +7,11 @@ import (
 	"strings"
 )
 
-func main() {
-	// set Flags
-	options := flags{}
-	options.setOption(os.Args[1:])
-
-	// enable debug
-	customDebug := debug{}
-	customDebug.setDebug(options.optionalFlags.debug)
-
-	// test if mandatory flags are present
-	options.mandatoryFlags.checkMandatoryAreSet()
-
-	// Create the log file for the current run
-	filenameNotCreated := CreateLogFile(customDebug, "ErrorsFile_")
-
+func reportIssues(orgName string, orgID string, options flags, customDebug debug, filenameNotCreated string, repoMap map[string]Repo) {
 	// Get the project ids associated with org
 	// If project ID is not specified => get all the projects
-	projectIDs, er := getProjectsIds(options, customDebug, filenameNotCreated)
+	log.Printf("*** INFO *** Reporting issues for org %s\n", orgName)
+	projectIDs, er := getProjectsIds(orgID, options, customDebug, filenameNotCreated)
 	if er != nil {
 		log.Fatal(er)
 	}
@@ -40,15 +27,6 @@ func main() {
 
 	// Create the log file for the current run
 	filename := CreateLogFile(customDebug, "listOfTicketCreated_")
-
-	// Get appsec cmdb
-	log.Println(options.optionalFlags.dynamoRegion)
-	repoMap, er := getRepos(options.optionalFlags.dynamoRegion, options.optionalFlags.dynamoProfile)
-	if er != nil {
-		log.Println("*** ERROR *** Could not retieve repos from AppSec CMDB")
-		log.Fatal(er)
-	}
-	log.Println(fmt.Sprintf("*** INFO *** Retrieved %d repos from AppSec CMDB", len(repoMap)))
 
 	for _, project := range projectIDs {
 
@@ -127,5 +105,43 @@ func main() {
 		fmt.Println("\n*************************************************************************************************************")
 		fmt.Printf("\n******** Dry run list of ticket can be found in log file %s ********", filename)
 		fmt.Println("\n*************************************************************************************************************")
+	}
+}
+
+func main() {
+	// set Flags
+	options := flags{}
+	options.setOption(os.Args[1:])
+
+	// enable debug
+	customDebug := debug{}
+	customDebug.setDebug(options.optionalFlags.debug)
+
+	// test if mandatory flags are present
+	options.mandatoryFlags.checkMandatoryAreSet()
+
+	// Create the log file for the current run
+	filenameNotCreated := CreateLogFile(customDebug, "ErrorsFile_")
+
+	// Get appsec cmdb
+	log.Println(options.optionalFlags.dynamoRegion)
+	repoMap, er := getRepos(options.optionalFlags.dynamoRegion, options.optionalFlags.dynamoProfile)
+	if er != nil {
+		log.Println("*** ERROR *** Could not retieve repos from AppSec CMDB")
+		log.Fatal(er)
+	}
+	log.Printf("*** INFO *** Retrieved %d repos from AppSec CMDB", len(repoMap))
+
+	// TODO check if org is passed via flags and only report issues for that org
+	// Get all orgs and do the rest of main for each org
+	orgIDs, err := getOrgIds(options, customDebug)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+
+	for orgName, orgID := range orgIDs {
+		options.mandatoryFlags.orgID = orgID
+		reportIssues(orgName, orgID, options, customDebug, filenameNotCreated, repoMap)
 	}
 }

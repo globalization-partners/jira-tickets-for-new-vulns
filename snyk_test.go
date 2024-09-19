@@ -102,7 +102,7 @@ func TestGetOrgProjects(t *testing.T) {
 
 	CreateLogFile(cD, "ErrorsFile_")
 
-	response, _ := getOrgProjects(flags, cD)
+	response, _ := getOrgProjects(flags.mandatoryFlags.orgID, flags, cD)
 
 	opts := jsondiff.DefaultConsoleOptions()
 	marshalledResp, _ := json.Marshal(response)
@@ -145,7 +145,7 @@ func TestGetOrgProjectsCriticality(t *testing.T) {
 
 	CreateLogFile(cD, "ErrorsFile_")
 
-	response, _ := getOrgProjects(flags, cD)
+	response, _ := getOrgProjects(flags.mandatoryFlags.orgID, flags, cD)
 
 	opts := jsondiff.DefaultConsoleOptions()
 	marshalledResp, _ := json.Marshal(response)
@@ -186,7 +186,7 @@ func TestGetOrgProjectsEnvironment(t *testing.T) {
 
 	CreateLogFile(cD, "ErrorsFile_")
 
-	response, _ := getOrgProjects(flags, cD)
+	response, _ := getOrgProjects(flags.mandatoryFlags.orgID, flags, cD)
 
 	opts := jsondiff.DefaultConsoleOptions()
 	marshalledResp, _ := json.Marshal(response)
@@ -227,7 +227,7 @@ func TestGetOrgProjectsLifecycle(t *testing.T) {
 
 	CreateLogFile(cD, "ErrorsFile_")
 
-	response, _ := getOrgProjects(flags, cD)
+	response, _ := getOrgProjects(flags.mandatoryFlags.orgID, flags, cD)
 
 	opts := jsondiff.DefaultConsoleOptions()
 	marshalledResp, _ := json.Marshal(response)
@@ -282,7 +282,7 @@ func TestGetProjectsIdsAllProjects(t *testing.T) {
 
 	filenameNotCreated := CreateLogFile(cD, "ErrorsFile_")
 
-	list, er := getProjectsIds(flags, cD, filenameNotCreated)
+	list, er := getProjectsIds(flags.mandatoryFlags.orgID, flags, cD, filenameNotCreated)
 	listString := "[" + strings.Join(list, ",") + "]"
 
 	if er != nil {

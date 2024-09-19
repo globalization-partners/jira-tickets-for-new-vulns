@@ -9,13 +9,45 @@ import (
 	"github.com/michael-go/go-jsn/jsn"
 )
 
-func getOrgProjects(flags flags, customDebug debug) ([]jsn.Json, error) {
+var ORGS = map[string]string{
+	"Billing":              "c8dfa46f-86c7-4e1f-ad03-8b54eaf7686a",
+	"Classic":              "b7b7afcd-242a-4756-8c83-56e69211d148",
+	"Emerging Products":    "878e064a-6ef9-4e0f-bde8-fff0d437470f",
+	"ExistingProducts":     "1156cfed-f570-49f4-bbc5-db2b69387632",
+	"Platform":             "b7ac3f09-0ca7-435a-96f2-012c0cc57a45",
+	"Product Integrations": "d85b4772-a027-40d6-9d9a-6454461f3921",
+	"Nova":                 "d871051b-e7fc-4c7b-b590-73482b3c3fb1",
+	"Data Engineering":     "47f1fc68-410b-49c9-8910-53ab433b22a3",
+}
+
+func getOrgIds(flags flags, customDebug debug) (map[string]string, error) {
+	verb := "GET"
+	api_version := "2024-08-22"
+	baseURL := flags.mandatoryFlags.endpointAPI + "/rest"
+	orgsAPI := "/orgs?version=" + api_version + "&limit=100"
+	orgs, err := makeSnykAPIRequest_REST(verb, baseURL, orgsAPI, flags.mandatoryFlags.apiToken, nil, customDebug)
+	if err != nil {
+		log.Printf("*** ERROR *** Could not list Orgs for endpoint %s\n", orgsAPI)
+	}
+	orgIDs := map[string]string{}
+	for k, v := range ORGS {
+		for _, org := range orgs {
+			if org.K("id").String().Value == v {
+				log.Printf("*** INFO *** Found Org %s with ID %s\n", k, v)
+				orgIDs[k] = v
+			}
+		}
+	}
+	return orgIDs, err
+}
+
+func getOrgProjects(orgId string, flags flags, customDebug debug) ([]jsn.Json, error) {
 	verb := "GET"
 	api_version := "2022-07-08~beta"
 
 	baseURL := flags.mandatoryFlags.endpointAPI + "/rest"
 
-	projectsAPI := "/orgs/" + flags.mandatoryFlags.orgID + "/projects?version=" + api_version + "&status=active&limit=100"
+	projectsAPI := "/orgs/" + orgId + "/projects?version=" + api_version + "&status=active&limit=100"
 	if len(flags.optionalFlags.projectCriticality) > 0 || len(flags.optionalFlags.projectEnvironment) > 0 || len(flags.optionalFlags.projectLifecycle) > 0 {
 
 		if len(flags.optionalFlags.projectCriticality) > 0 {
@@ -45,20 +77,20 @@ func getOrgProjects(flags flags, customDebug debug) ([]jsn.Json, error) {
 	return projectList, err
 }
 
-func getProjectsIds(options flags, customDebug debug, notCreatedLogFile string) ([]string, error) {
+func getProjectsIds(orgId string, options flags, customDebug debug, notCreatedLogFile string) ([]string, error) {
 
 	var projectIds []string
 	if len(options.optionalFlags.projectID) == 0 {
 		filters := "projectCriticality: " + options.optionalFlags.projectCriticality + "\n projectEnvironment: " + options.optionalFlags.projectEnvironment + "\n projectLifecycle: " + options.optionalFlags.projectLifecycle
 		log.Println("*** INFO *** Project ID not specified - listing all projects that match the following filters: ", filters)
 
-		projects, err := getOrgProjects(options, customDebug)
+		projects, err := getOrgProjects(orgId, options, customDebug)
 		if err != nil {
 			message := fmt.Sprintf("error while getting projects ID for org %s", options.mandatoryFlags.orgID)
 			writeErrorFile("getProjectsIds", message, customDebug)
 			return nil, err
 		}
-	
+
 		for _, project := range projects {
 			projectID := project.K("id").String().Value
 			projectIds = append(projectIds, projectID)
