@@ -17,7 +17,6 @@ func TestGetVulnsWithoutTicketFunc(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
@@ -25,6 +24,7 @@ func TestGetVulnsWithoutTicketFunc(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.severity = "low"
 	Of.priorityScoreThreshold = 0
 	Of.issueType = "all"
@@ -78,7 +78,6 @@ func TestNoVulnOrLicense(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
@@ -86,6 +85,7 @@ func TestNoVulnOrLicense(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.severity = "low"
 	Of.priorityScoreThreshold = 0
 	Of.issueType = "all"
@@ -133,7 +133,6 @@ func TestGetVulnsWithoutTicketErrorRetrievingDataFunc(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
@@ -141,6 +140,7 @@ func TestGetVulnsWithoutTicketErrorRetrievingDataFunc(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.severity = "low"
 	Of.priorityScoreThreshold = 0
 	Of.issueType = "all"
@@ -189,7 +189,6 @@ func TestGetLicenseWithoutTicketFunc(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "456"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "456"
 	Mf.jiraProjectID = "456"
@@ -197,6 +196,7 @@ func TestGetLicenseWithoutTicketFunc(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "456"
 	Of.severity = "low"
 	Of.priorityScoreThreshold = 0
 	Of.issueType = "all"
