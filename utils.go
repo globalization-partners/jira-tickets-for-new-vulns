@@ -71,7 +71,6 @@ set the mandatory flags structure
 */
 func (Mf *MandatoryFlags) setMandatoryFlags(apiTokenPtr *string, v viper.Viper) {
 
-	Mf.orgID = v.GetString("snyk.orgID")
 	Mf.endpointAPI = v.GetString("snyk.api")
 	Mf.apiToken = *apiTokenPtr
 	Mf.jiraProjectID = v.GetString("jira.jiraProjectID")
@@ -90,6 +89,7 @@ set the optional flags structure
 */
 func (Of *optionalFlags) setOptionalFlags(debugPtr bool, dryRunPtr bool, v viper.Viper) {
 
+	Of.orgID = v.GetString("snyk.orgID")
 	Of.projectID = v.GetString("snyk.projectID")
 	Of.projectCriticality = v.GetString("snyk.projectCriticality")
 	Of.projectEnvironment = v.GetString("snyk.projectEnvironment")
@@ -242,7 +242,7 @@ exit if the mandatory flags are missing
 **
 */
 func (flags *MandatoryFlags) checkMandatoryAreSet() {
-	if len(flags.orgID) == 0 || len(flags.apiToken) == 0 || (len(flags.jiraProjectID) == 0 && len(flags.jiraProjectKey) == 0) {
+	if len(flags.apiToken) == 0 || (len(flags.jiraProjectID) == 0 && len(flags.jiraProjectKey) == 0) {
 		log.Println("*** ERROR *** Missing required flag(s). Please ensure orgID, token, jiraProjectID or jiraProjectKey are set.")
 		os.Exit(1)
 	}

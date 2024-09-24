@@ -31,14 +31,14 @@ func reportIssues(orgName string, orgID string, options flags, customDebug debug
 	for _, project := range projectIDs {
 
 		log.Println("*** INFO *** Step 1/4 - Retrieving project", project)
-		projectInfo, err := getProjectDetails(options.mandatoryFlags, project, customDebug)
+		projectInfo, err := getProjectDetails(orgID, options.mandatoryFlags, project, customDebug)
 		if err != nil {
 			customDebug.Debug("*** ERROR *** could not get project details. Skipping project ", project)
 			continue
 		}
 
 		log.Println("*** INFO *** Step 2/4 - Retrieving a list of existing Jira tickets")
-		tickets, err := getJiraTickets(options.mandatoryFlags, project, customDebug)
+		tickets, err := getJiraTickets(orgID, options.mandatoryFlags, project, customDebug)
 		if err != nil {
 			customDebug.Debug("*** ERROR *** could not get already existing tickets details. Skipping project ", project)
 			continue
@@ -132,7 +132,6 @@ func main() {
 	}
 	log.Printf("*** INFO *** Retrieved %d repos from AppSec CMDB", len(repoMap))
 
-	// TODO check if org is passed via flags and only report issues for that org
 	// Get all orgs and do the rest of main for each org
 	orgIDs, err := getOrgIds(options, customDebug)
 	if err != nil {
@@ -141,7 +140,7 @@ func main() {
 	}
 
 	for orgName, orgID := range orgIDs {
-		options.mandatoryFlags.orgID = orgID
+		options.optionalFlags.orgID = orgID
 		reportIssues(orgName, orgID, options, customDebug, filenameNotCreated, repoMap)
 	}
 }
