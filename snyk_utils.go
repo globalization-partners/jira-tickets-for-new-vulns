@@ -30,7 +30,9 @@ func makeSnykAPIRequest(verb string, endpointURL string, snykToken string, body 
 	request.Header.Add("Authorization", "token "+snykToken)
 	request.Header.Set("User-Agent", "tech-services/snyk-jira-tickets-for-new-vulns")
 
-	client := &http.Client{}
+	client := &http.Client{
+		Timeout: time.Second * 30, // 30 second timeout
+	}
 	response, err := client.Do(request)
 	if err != nil {
 		customDebug.Debugf("*** ERROR *** Request on endpoint '%s' failed with error %s\n", endpointURL, err.Error())
@@ -142,7 +144,6 @@ func makeSnykAPIRequest(verb string, endpointURL string, snykToken string, body 
 	return responseData, err
 }
 
-
 // This does not have general testing or capabilities at present.
 // So far, is being tested only with GET https://api.snyk.io/rest/orgs/[OrgID]/projects
 // Need to investigate and update error handling TODO
@@ -155,7 +156,7 @@ func makeSnykAPIRequest_REST(verb string, baseURL string, endpointURL string, sn
 	url := baseURL + endpointURL
 	client := &http.Client{}
 
-	for url != "" { 
+	for url != "" {
 		if verb == "POST" && body != nil {
 			bodyBuffer = bytes.NewBuffer(body)
 		}
@@ -165,7 +166,7 @@ func makeSnykAPIRequest_REST(verb string, baseURL string, endpointURL string, sn
 			customDebug.Debugf("*** ERROR *** could not create requests to '%s' failed with error %s\n", url, err.Error())
 			return []jsn.Json{}, err
 		}
-	
+
 		request.Header.Add("Accept", "application/vnd.api+json")
 		request.Header.Add("Authorization", snykToken)
 		request.Header.Set("User-Agent", "tech-services/snyk-jira-tickets-for-new-vulns")
@@ -176,7 +177,7 @@ func makeSnykAPIRequest_REST(verb string, baseURL string, endpointURL string, sn
 			return []jsn.Json{}, err
 		}
 		defer response.Body.Close()
-    	// fmt.Println("Response Status Code:", response.StatusCode)
+		// fmt.Println("Response Status Code:", response.StatusCode)
 
 		customDebug.Debugf("*** INFO *** Sending %s request to %s", verb, url)
 
