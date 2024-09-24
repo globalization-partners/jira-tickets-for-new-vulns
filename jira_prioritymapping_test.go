@@ -27,7 +27,6 @@ func TestOpenJiraTicketWithPriorityMappingFunc(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
@@ -35,6 +34,7 @@ func TestOpenJiraTicketWithPriorityMappingFunc(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.severity = ""
 	Of.priorityScoreThreshold = 0
 	Of.issueType = ""
@@ -88,7 +88,6 @@ func TestOpenJiraTicketWithoutPriorityMappingFunc(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
@@ -96,6 +95,7 @@ func TestOpenJiraTicketWithoutPriorityMappingFunc(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.severity = ""
 	Of.priorityScoreThreshold = 0
 	Of.issueType = ""
@@ -151,7 +151,6 @@ func TestOpenJiraTicketWithCustomPriorityMappingFunc(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
@@ -159,6 +158,7 @@ func TestOpenJiraTicketWithCustomPriorityMappingFunc(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.severity = ""
 	Of.priorityScoreThreshold = 0
 	Of.issueType = ""

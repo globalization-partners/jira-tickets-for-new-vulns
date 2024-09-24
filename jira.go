@@ -57,8 +57,8 @@ type IssueType struct {
 	Name string `json:"name"`
 }
 
-func getJiraTickets(Mf MandatoryFlags, projectID string, customDebug debug) (map[string]string, error) {
-	responseData, err := makeSnykAPIRequest("GET", Mf.endpointAPI+"/v1/org/"+Mf.orgID+"/project/"+projectID+"/jira-issues", Mf.apiToken, nil, customDebug)
+func getJiraTickets(orgID string, Mf MandatoryFlags, projectID string, customDebug debug) (map[string]string, error) {
+	responseData, err := makeSnykAPIRequest("GET", Mf.endpointAPI+"/v1/org/"+orgID+"/project/"+projectID+"/jira-issues", Mf.apiToken, nil, customDebug)
 	if err != nil {
 		customDebug.Debug("*** ERROR *** Could not get the Jira issues via Snyk API")
 		message := fmt.Sprintf("Could not get the tickets %s\n", err.Error())
@@ -126,7 +126,7 @@ func openJiraTicket(flags flags, projectInfo jsn.Json, vulnForJira interface{}, 
 	jiraTicket.Fields.IssueTypes.Name = flags.optionalFlags.jiraTicketType
 
 	projectInfoId := projectInfo.K("id").String().Value
-	endpoint := fmt.Sprintf("/v1/org/%s/project/%s/issue/%s/jira-issue", flags.mandatoryFlags.orgID, projectInfoId, vulnID)
+	endpoint := fmt.Sprintf("/v1/org/%s/project/%s/issue/%s/jira-issue", flags.optionalFlags.orgID, projectInfoId, vulnID)
 	var jiraApiUrl = flags.mandatoryFlags.endpointAPI + endpoint
 
 	if projectInfoId == "" {
@@ -135,11 +135,14 @@ func openJiraTicket(flags flags, projectInfo jsn.Json, vulnForJira interface{}, 
 	}
 
 	// Use AppSec spcecific labels if no labels passed
+	projectType := projectInfo.K("type").String().Value
 	if flags.optionalFlags.labels == "" {
 		if issueType == "code" {
 			jiraTicket.Fields.Labels = []string{"security-sast"}
 		} else if flags.optionalFlags.issueType == "license" {
 			jiraTicket.Fields.Labels = []string{"security-license"}
+		} else if projectType == "dockerfile" {
+			jiraTicket.Fields.Labels = []string{"security-container"}
 		} else {
 			jiraTicket.Fields.Labels = []string{"security-sca"}
 		}
@@ -268,7 +271,12 @@ func openJiraTickets(flags flags, projectInfo jsn.Json, vulnsForJira map[string]
 
 	for _, vulnForJira := range vulnsForJira {
 		jsonVuln, _ := jsn.NewJson(vulnForJira)
-		repo, ok := repoMap[projectInfo.K("remoteRepoUrl").String().Value]
+		projectName := projectInfo.K("name").String().Value
+		if customDebug.PrintDebug {
+			log.Printf("*** DEBUG *** Processing project %s", projectName)
+		}
+		name := strings.Split(projectName, ":")[0]
+		repo, ok := repoMap[name]
 		if !ok {
 			message := fmt.Sprintf("Skipping creating ticket for %s because repo is not found in AppSec CMDB.", jsonVuln.K("issueData").K("title").String().Value)
 			fullListNotCreatedIssue += displayErrorForIssue(vulnForJira, "ifRepoInAppSecCMDBOnly", errors.New(message), "", customDebug)

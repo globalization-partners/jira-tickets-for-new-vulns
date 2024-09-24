@@ -15,7 +15,6 @@ type flags struct {
 }
 
 type MandatoryFlags struct {
-	orgID          string
 	endpointAPI    string
 	apiToken       string
 	jiraProjectID  string
@@ -23,6 +22,7 @@ type MandatoryFlags struct {
 }
 
 type optionalFlags struct {
+	orgID                  string
 	projectID              string
 	projectCriticality     string
 	projectEnvironment     string

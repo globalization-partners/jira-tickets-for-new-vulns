@@ -77,11 +77,11 @@ func getVulnsWithoutTicket(flags flags, projectID string, maturityFilter []strin
 		customDebug.Debug(" *** ERROR *** IAC projects are not supported by this tool, skipping this project")
 	}
 
-	responseAggregatedData, err := makeSnykAPIRequest("POST", flags.mandatoryFlags.endpointAPI+"/v1/org/"+flags.mandatoryFlags.orgID+"/project/"+projectID+"/aggregated-issues", flags.mandatoryFlags.apiToken, marshalledBody, customDebug)
+	responseAggregatedData, err := makeSnykAPIRequest("POST", flags.mandatoryFlags.endpointAPI+"/v1/org/"+flags.optionalFlags.orgID+"/project/"+projectID+"/aggregated-issues", flags.mandatoryFlags.apiToken, marshalledBody, customDebug)
 	if err != nil {
-		message := fmt.Sprintf("*** ERROR *** Could not get aggregated data from %s org %s project %s, skipping this project", flags.mandatoryFlags.endpointAPI, flags.mandatoryFlags.orgID, projectID)
+		message := fmt.Sprintf("*** ERROR *** Could not get aggregated data from %s org %s project %s, skipping this project", flags.mandatoryFlags.endpointAPI, flags.optionalFlags.orgID, projectID)
 		writeErrorFile("getVulnsWithoutTicket", message, customDebug)
-		customDebug.Debugf("*** ERROR *** Could not get aggregated data from %s org %s project %s, skipping this project", flags.mandatoryFlags.endpointAPI, flags.mandatoryFlags.orgID, projectID)
+		customDebug.Debugf("*** ERROR *** Could not get aggregated data from %s org %s project %s, skipping this project", flags.mandatoryFlags.endpointAPI, flags.optionalFlags.orgID, projectID)
 		return nil, "", err
 	}
 
@@ -163,11 +163,11 @@ func getSnykOpenSourceIssueWithoutTickets(flags flags, projectID string, maturit
 					}
 					json.Unmarshal(bytes, &vulnsPerPath)
 
-					ProjectIssuePathData, err := makeSnykAPIRequest("GET", flags.mandatoryFlags.endpointAPI+"/v1/org/"+flags.mandatoryFlags.orgID+"/project/"+projectID+"/issue/"+issueId+"/paths", flags.mandatoryFlags.apiToken, nil, customDebug)
+					ProjectIssuePathData, err := makeSnykAPIRequest("GET", flags.mandatoryFlags.endpointAPI+"/v1/org/"+flags.optionalFlags.orgID+"/project/"+projectID+"/issue/"+issueId+"/paths", flags.mandatoryFlags.apiToken, nil, customDebug)
 					if err != nil {
-						log.Printf("*** ERROR *** Could not get paths data from %s org %s project %s issue %s", flags.mandatoryFlags.endpointAPI, flags.mandatoryFlags.orgID, projectID, issueId)
+						log.Printf("*** ERROR *** Could not get paths data from %s org %s project %s issue %s", flags.mandatoryFlags.endpointAPI, flags.optionalFlags.orgID, projectID, issueId)
 						issueSkipped += "\nissue ID: " + issueId + " from project ID:" + projectID
-						message := fmt.Sprintf("*** ERROR *** Could not get paths data from %s org %s project %s issue %s skipped", flags.mandatoryFlags.endpointAPI, flags.mandatoryFlags.orgID, projectID, issueId)
+						message := fmt.Sprintf("*** ERROR *** Could not get paths data from %s org %s project %s issue %s skipped", flags.mandatoryFlags.endpointAPI, flags.optionalFlags.orgID, projectID, issueId)
 						writeErrorFile("getSnykOpenSourceIssueWithoutTickets", message, customDebug)
 						continue
 					}
@@ -175,7 +175,7 @@ func getSnykOpenSourceIssueWithoutTickets(flags flags, projectID string, maturit
 					if er != nil {
 						log.Printf("*** ERROR *** Json creation failed\n")
 						issueSkipped += "\nissue ID: " + issueId + " from project ID:" + projectID
-						message := fmt.Sprintf("*** ERROR *** *** ERROR *** Json creation failed \n issue skipped %s org %s project %s issue %s", flags.mandatoryFlags.endpointAPI, flags.mandatoryFlags.orgID, projectID, issueId)
+						message := fmt.Sprintf("*** ERROR *** *** ERROR *** Json creation failed \n issue skipped %s org %s project %s issue %s", flags.mandatoryFlags.endpointAPI, flags.optionalFlags.orgID, projectID, issueId)
 						writeErrorFile("getSnykOpenSourceIssueWithoutTickets", message, customDebug)
 						continue
 					}
@@ -184,7 +184,7 @@ func getSnykOpenSourceIssueWithoutTickets(flags flags, projectID string, maturit
 					vulnsWithAllPaths[issueId], err = jsn.NewJson(marshalledvulnsPerPath)
 					if er != nil {
 						log.Printf("*** ERROR *** vuln per path Json creation failed\n")
-						message := fmt.Sprintf("*** ERROR *** Json creation failed \n issue skipped %s org %s project %s issue %s", flags.mandatoryFlags.endpointAPI, flags.mandatoryFlags.orgID, projectID, issueId)
+						message := fmt.Sprintf("*** ERROR *** Json creation failed \n issue skipped %s org %s project %s issue %s", flags.mandatoryFlags.endpointAPI, flags.optionalFlags.orgID, projectID, issueId)
 						writeErrorFile("getSnykOpenSourceIssueWithoutTickets", message, customDebug)
 						issueSkipped += "\nissue ID: " + issueId + " from project ID:" + projectID
 						continue
@@ -205,11 +205,11 @@ func getSnykOpenSourceIssueWithoutTickets(flags flags, projectID string, maturit
 					}
 					json.Unmarshal(bytes, &vulnsPerPath)
 
-					ProjectIssuePathData, err := makeSnykAPIRequest("GET", flags.mandatoryFlags.endpointAPI+"/v1/org/"+flags.mandatoryFlags.orgID+"/project/"+projectID+"/issue/"+issueId+"/paths", flags.mandatoryFlags.apiToken, nil, customDebug)
+					ProjectIssuePathData, err := makeSnykAPIRequest("GET", flags.mandatoryFlags.endpointAPI+"/v1/org/"+flags.optionalFlags.orgID+"/project/"+projectID+"/issue/"+issueId+"/paths", flags.mandatoryFlags.apiToken, nil, customDebug)
 					if err != nil {
-						log.Printf("*** ERROR *** Could not get aggregated data from %s org %s project %s issue %s", flags.mandatoryFlags.endpointAPI, flags.mandatoryFlags.orgID, projectID, issueId)
+						log.Printf("*** ERROR *** Could not get aggregated data from %s org %s project %s issue %s", flags.mandatoryFlags.endpointAPI, flags.optionalFlags.orgID, projectID, issueId)
 						issueSkipped += "\nissue ID: " + issueId + " from project ID:" + projectID
-						message := fmt.Sprintf("*** ERROR *** Could not get aggregated data from %s org %s project %s issue %s skipped", flags.mandatoryFlags.endpointAPI, flags.mandatoryFlags.orgID, projectID, issueId)
+						message := fmt.Sprintf("*** ERROR *** Could not get aggregated data from %s org %s project %s issue %s skipped", flags.mandatoryFlags.endpointAPI, flags.optionalFlags.orgID, projectID, issueId)
 						writeErrorFile("getSnykOpenSourceIssueWithoutTickets", message, customDebug)
 						continue
 					}
@@ -218,7 +218,7 @@ func getSnykOpenSourceIssueWithoutTickets(flags flags, projectID string, maturit
 					if er != nil {
 						log.Printf("*** ERROR *** Json creation failed\n")
 						issueSkipped += "\nissue ID: " + issueId + " from project ID:" + projectID
-						message := fmt.Sprintf("*** ERROR *** Json creation failed \n issue skipped %s org %s project %s issue %s", flags.mandatoryFlags.endpointAPI, flags.mandatoryFlags.orgID, projectID, issueId)
+						message := fmt.Sprintf("*** ERROR *** Json creation failed \n issue skipped %s org %s project %s issue %s", flags.mandatoryFlags.endpointAPI, flags.optionalFlags.orgID, projectID, issueId)
 						writeErrorFile("getSnykOpenSourceIssueWithoutTickets", message, customDebug)
 						continue
 					}
@@ -229,7 +229,7 @@ func getSnykOpenSourceIssueWithoutTickets(flags flags, projectID string, maturit
 					if er != nil {
 						log.Printf("*** ERROR *** license per path Json creation failed\n")
 						issueSkipped += "\nissue ID: " + issueId + " from project ID:" + projectID
-						message := fmt.Sprintf("*** ERROR *** Json creation failed \n issue skipped %s org %s project %s issue %s", flags.mandatoryFlags.endpointAPI, flags.mandatoryFlags.orgID, projectID, issueId)
+						message := fmt.Sprintf("*** ERROR *** Json creation failed \n issue skipped %s org %s project %s issue %s", flags.mandatoryFlags.endpointAPI, flags.optionalFlags.orgID, projectID, issueId)
 						writeErrorFile("getSnykOpenSourceIssueWithoutTickets", message, customDebug)
 						continue
 					}
@@ -314,9 +314,9 @@ func getSnykCodeIssueWithoutTickets(flags flags, projectID string, tickets map[s
 
 	for _, severityIndexValue := range severity {
 
-		url := endpointAPI + "/rest/orgs/" + flags.mandatoryFlags.orgID + "/issues?project_id=" + projectID + "&version=2021-08-20~experimental"
+		url := endpointAPI + "/rest/orgs/" + flags.optionalFlags.orgID + "/issues?project_id=" + projectID + "&version=2021-08-20~experimental"
 		if len(flags.optionalFlags.severity) > 0 {
-			url = endpointAPI + "/rest/orgs/" + flags.mandatoryFlags.orgID + "/issues?project_id=" + projectID + "&severity=" + severityIndexValue + "&version=2021-08-20~experimental"
+			url = endpointAPI + "/rest/orgs/" + flags.optionalFlags.orgID + "/issues?project_id=" + projectID + "&severity=" + severityIndexValue + "&version=2021-08-20~experimental"
 		}
 
 		for {
@@ -325,9 +325,9 @@ func getSnykCodeIssueWithoutTickets(flags flags, projectID string, tickets map[s
 
 			if err != nil {
 				if (err.Error() != "Not found, Request failed") && (err.Error() != "Request failed with 50x") {
-					log.Printf("*** ERROR ***** Could not get code issues list from %s org %s project %s", flags.mandatoryFlags.endpointAPI, flags.mandatoryFlags.orgID, projectID)
+					log.Printf("*** ERROR ***** Could not get code issues list from %s org %s project %s", flags.mandatoryFlags.endpointAPI, flags.optionalFlags.orgID, projectID)
 					errorMessage = err
-					message := fmt.Sprintf("*** ERROR ***** Could not get code issues list from %s org %s project %s", flags.mandatoryFlags.endpointAPI, flags.mandatoryFlags.orgID, projectID)
+					message := fmt.Sprintf("*** ERROR ***** Could not get code issues list from %s org %s project %s", flags.mandatoryFlags.endpointAPI, flags.optionalFlags.orgID, projectID)
 					writeErrorFile("getSnykCodeIssueWithoutTickets", message, customDebug)
 					break
 				}
@@ -350,13 +350,13 @@ func getSnykCodeIssueWithoutTickets(flags flags, projectID string, tickets map[s
 
 						id := e.K("id").String().Value
 
-						url := endpointAPI + "/rest/orgs/" + flags.mandatoryFlags.orgID + "/issues/detail/code/" + id + "?project_id=" + projectID + "&version=2022-04-06~experimental"
+						url := endpointAPI + "/rest/orgs/" + flags.optionalFlags.orgID + "/issues/detail/code/" + id + "?project_id=" + projectID + "&version=2022-04-06~experimental"
 
 						// get the details of this code issue id
 						responseIssueDetail, err := makeSnykAPIRequest("GET", url, flags.mandatoryFlags.apiToken, nil, customDebug)
 						if err != nil {
-							log.Printf("*** ERROR *** Could not get code issues list from %s org %s project %s", flags.mandatoryFlags.endpointAPI, flags.mandatoryFlags.orgID, projectID)
-							message := fmt.Sprintf("*** ERROR *** Could not get code issues list from %s org %s project %s", flags.mandatoryFlags.endpointAPI, flags.mandatoryFlags.orgID, projectID)
+							log.Printf("*** ERROR *** Could not get code issues list from %s org %s project %s", flags.mandatoryFlags.endpointAPI, flags.optionalFlags.orgID, projectID)
+							message := fmt.Sprintf("*** ERROR *** Could not get code issues list from %s org %s project %s", flags.mandatoryFlags.endpointAPI, flags.optionalFlags.orgID, projectID)
 							writeErrorFile("getSnykCodeIssueWithoutTickets", message, customDebug)
 							continue
 						}

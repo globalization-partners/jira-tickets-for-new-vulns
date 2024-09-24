@@ -20,7 +20,6 @@ func TestGetProjectDetailsFunc(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
@@ -31,7 +30,7 @@ func TestGetProjectDetailsFunc(t *testing.T) {
 
 	CreateLogFile(cD, "ErrorsFile_")
 
-	response, _ := getProjectDetails(Mf, "123", cD)
+	response, _ := getProjectDetails("123", Mf, "123", cD)
 
 	opts := jsondiff.DefaultConsoleOptions()
 	marshalledResp, _ := json.Marshal(response)
@@ -53,7 +52,6 @@ func TestGetProjectDetailsErrorFunc(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
@@ -64,7 +62,7 @@ func TestGetProjectDetailsErrorFunc(t *testing.T) {
 
 	CreateLogFile(cD, "ErrorsFile_")
 
-	_, err := getProjectDetails(Mf, "123", cD)
+	_, err := getProjectDetails("123", Mf, "123", cD)
 	assert.Contains(err.Error(), "Failure, Could not read the Project detail for endpoint")
 
 	removeLogFile()
@@ -84,13 +82,13 @@ func TestGetOrgProjects(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 
 	flags := flags{}
 	flags.mandatoryFlags = Mf
@@ -102,7 +100,7 @@ func TestGetOrgProjects(t *testing.T) {
 
 	CreateLogFile(cD, "ErrorsFile_")
 
-	response, _ := getOrgProjects(flags.mandatoryFlags.orgID, flags, cD)
+	response, _ := getOrgProjects(flags.optionalFlags.orgID, flags, cD)
 
 	opts := jsondiff.DefaultConsoleOptions()
 	marshalledResp, _ := json.Marshal(response)
@@ -126,13 +124,13 @@ func TestGetOrgProjectsCriticality(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.projectCriticality = "critical"
 
 	flags := flags{}
@@ -145,7 +143,7 @@ func TestGetOrgProjectsCriticality(t *testing.T) {
 
 	CreateLogFile(cD, "ErrorsFile_")
 
-	response, _ := getOrgProjects(flags.mandatoryFlags.orgID, flags, cD)
+	response, _ := getOrgProjects(flags.optionalFlags.orgID, flags, cD)
 
 	opts := jsondiff.DefaultConsoleOptions()
 	marshalledResp, _ := json.Marshal(response)
@@ -167,13 +165,13 @@ func TestGetOrgProjectsEnvironment(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.projectEnvironment = "frontend,external"
 
 	flags := flags{}
@@ -186,7 +184,7 @@ func TestGetOrgProjectsEnvironment(t *testing.T) {
 
 	CreateLogFile(cD, "ErrorsFile_")
 
-	response, _ := getOrgProjects(flags.mandatoryFlags.orgID, flags, cD)
+	response, _ := getOrgProjects(flags.optionalFlags.orgID, flags, cD)
 
 	opts := jsondiff.DefaultConsoleOptions()
 	marshalledResp, _ := json.Marshal(response)
@@ -208,13 +206,13 @@ func TestGetOrgProjectsLifecycle(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.projectLifecycle = "production"
 
 	flags := flags{}
@@ -227,7 +225,7 @@ func TestGetOrgProjectsLifecycle(t *testing.T) {
 
 	CreateLogFile(cD, "ErrorsFile_")
 
-	response, _ := getOrgProjects(flags.mandatoryFlags.orgID, flags, cD)
+	response, _ := getOrgProjects(flags.optionalFlags.orgID, flags, cD)
 
 	opts := jsondiff.DefaultConsoleOptions()
 	marshalledResp, _ := json.Marshal(response)
@@ -250,7 +248,6 @@ func TestGetProjectsIdsAllProjects(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
@@ -258,6 +255,7 @@ func TestGetProjectsIdsAllProjects(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.severity = ""
 	Of.priorityScoreThreshold = 0
 	Of.issueType = ""
@@ -282,7 +280,7 @@ func TestGetProjectsIdsAllProjects(t *testing.T) {
 
 	filenameNotCreated := CreateLogFile(cD, "ErrorsFile_")
 
-	list, er := getProjectsIds(flags.mandatoryFlags.orgID, flags, cD, filenameNotCreated)
+	list, er := getProjectsIds(flags.optionalFlags.orgID, flags, cD, filenameNotCreated)
 	listString := "[" + strings.Join(list, ",") + "]"
 
 	if er != nil {

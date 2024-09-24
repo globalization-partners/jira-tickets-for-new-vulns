@@ -18,7 +18,6 @@ func TestFormatCodeTicketFunc(t *testing.T) {
 	server := HTTPResponseCodeIssueStubAndMirrorRequest()
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
@@ -26,6 +25,7 @@ func TestFormatCodeTicketFunc(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.severity = ""
 	Of.priorityScoreThreshold = 0
 	Of.issueType = ""
@@ -87,7 +87,6 @@ func TestOpenJiraTicketCodeOnly(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
@@ -95,6 +94,7 @@ func TestOpenJiraTicketCodeOnly(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.severity = ""
 	Of.priorityScoreThreshold = 0
 	Of.issueType = ""
@@ -148,7 +148,6 @@ func TestOpenJiraTicketCodeOnlyWithLabel(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "456"
@@ -156,6 +155,7 @@ func TestOpenJiraTicketCodeOnlyWithLabel(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.severity = ""
 	Of.priorityScoreThreshold = 0
 	Of.issueType = ""
@@ -213,7 +213,6 @@ func TestOpenJiraTicketCodeOnlyWithSeverity(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "456"
@@ -221,6 +220,7 @@ func TestOpenJiraTicketCodeOnlyWithSeverity(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.severity = ""
 	Of.priorityScoreThreshold = 0
 	Of.issueType = ""
@@ -278,7 +278,6 @@ func TestOpenJiraTicketCodeOnlyWithAssigneeId(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "456"
@@ -286,6 +285,7 @@ func TestOpenJiraTicketCodeOnlyWithAssigneeId(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.severity = ""
 	Of.priorityScoreThreshold = 0
 	Of.issueType = ""
@@ -340,7 +340,6 @@ func TestGetSnykCodeIssueWithoutTickets(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
@@ -348,6 +347,7 @@ func TestGetSnykCodeIssueWithoutTickets(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.severity = "low"
 	Of.priorityScoreThreshold = 0
 	Of.issueType = "all"
@@ -398,7 +398,6 @@ func TestGetSnykCodeIssueWithoutTicketsWithIgnored(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
@@ -406,6 +405,7 @@ func TestGetSnykCodeIssueWithoutTicketsWithIgnored(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.severity = "low"
 	Of.priorityScoreThreshold = 0
 	Of.issueType = "all"
@@ -456,7 +456,6 @@ func TestGetSnykCodeIssueWithoutTicketsWithSeverityFilter(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
@@ -464,6 +463,7 @@ func TestGetSnykCodeIssueWithoutTicketsWithSeverityFilter(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.severity = "high"
 	Of.priorityScoreThreshold = 0
 	Of.issueType = "all"
@@ -512,7 +512,6 @@ func TestGetSnykCodeIssueWithoutTicketsWithPagination(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "xxx99a85-c519-xxxx-ae55-xxx9b9bfaxxx"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
@@ -520,6 +519,7 @@ func TestGetSnykCodeIssueWithoutTicketsWithPagination(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "xxx99a85-c519-xxxx-ae55-xxx9b9bfaxxx"
 	Of.severity = "low"
 	Of.priorityScoreThreshold = 0
 	Of.issueType = "all"

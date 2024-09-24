@@ -21,7 +21,6 @@ func TestGetJiraTicketFunc(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectKey = ""
@@ -30,7 +29,7 @@ func TestGetJiraTicketFunc(t *testing.T) {
 	cD := debug{}
 	cD.setDebug(false)
 
-	response, _ := getJiraTickets(Mf, "123", cD)
+	response, _ := getJiraTickets("123", Mf, "123", cD)
 
 	opts := jsondiff.DefaultConsoleOptions()
 	marshalledResp, _ := json.Marshal(response)
@@ -56,7 +55,6 @@ func TestOpenJiraTicketWithLabelsFunc(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
@@ -64,6 +62,7 @@ func TestOpenJiraTicketWithLabelsFunc(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.severity = ""
 	Of.priorityScoreThreshold = 0
 	Of.issueType = ""
@@ -117,7 +116,6 @@ func TestOpenJiraTicketWithoutLabelsFunc(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
@@ -125,6 +123,7 @@ func TestOpenJiraTicketWithoutLabelsFunc(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.severity = ""
 	Of.priorityScoreThreshold = 0
 	Of.issueType = ""
