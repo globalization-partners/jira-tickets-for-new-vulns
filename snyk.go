@@ -12,12 +12,12 @@ import (
 var ORGS = map[string]string{
 	"Billing":              "c8dfa46f-86c7-4e1f-ad03-8b54eaf7686a",
 	"Classic":              "b7b7afcd-242a-4756-8c83-56e69211d148",
+	"Data Engineering":     "47f1fc68-410b-49c9-8910-53ab433b22a3",
 	"Emerging Products":    "878e064a-6ef9-4e0f-bde8-fff0d437470f",
 	"ExistingProducts":     "1156cfed-f570-49f4-bbc5-db2b69387632",
+	"Nova":                 "d871051b-e7fc-4c7b-b590-73482b3c3fb1",
 	"Platform":             "b7ac3f09-0ca7-435a-96f2-012c0cc57a45",
 	"Product Integrations": "d85b4772-a027-40d6-9d9a-6454461f3921",
-	"Nova":                 "d871051b-e7fc-4c7b-b590-73482b3c3fb1",
-	"Data Engineering":     "47f1fc68-410b-49c9-8910-53ab433b22a3",
 }
 
 func getOrgIds(flags flags, customDebug debug) (map[string]string, error) {
@@ -29,14 +29,27 @@ func getOrgIds(flags flags, customDebug debug) (map[string]string, error) {
 	if err != nil {
 		log.Printf("*** ERROR *** Could not list Orgs for endpoint %s\n", orgsAPI)
 	}
+
+	// if org is passed as a flag, then use it
+	if len(flags.optionalFlags.orgID) != 0 {
+		ORGS = map[string]string{
+			"UNKNOWN": flags.optionalFlags.orgID,
+		}
+	}
+
 	orgIDs := map[string]string{}
-	for k, v := range ORGS {
+	for _, v := range ORGS {
 		for _, org := range orgs {
 			if org.K("id").String().Value == v {
-				log.Printf("*** INFO *** Found Org %s with ID %s\n", k, v)
-				orgIDs[k] = v
+				name := org.K("attributes").K("name").String().Value
+				log.Printf("*** INFO *** Found Org %s with ID %s\n", name, v)
+				orgIDs[name] = v
 			}
 		}
+	}
+	if len(orgIDs) == 0 {
+		log.Printf("*** ERROR *** Could not find any Orgs for endpoint %s\n", orgsAPI)
+		err = errors.New("Could not find any Orgs for endpoint " + orgsAPI)
 	}
 	return orgIDs, err
 }
@@ -86,7 +99,7 @@ func getProjectsIds(orgId string, options flags, customDebug debug, notCreatedLo
 
 		projects, err := getOrgProjects(orgId, options, customDebug)
 		if err != nil {
-			message := fmt.Sprintf("error while getting projects ID for org %s", options.mandatoryFlags.orgID)
+			message := fmt.Sprintf("error while getting projects ID for org %s", options.optionalFlags.orgID)
 			writeErrorFile("getProjectsIds", message, customDebug)
 			return nil, err
 		}
@@ -109,8 +122,8 @@ func getProjectsIds(orgId string, options flags, customDebug debug, notCreatedLo
 	return projectIds, nil
 }
 
-func getProjectDetails(Mf MandatoryFlags, projectID string, customDebug debug) (jsn.Json, error) {
-	responseData, err := makeSnykAPIRequest("GET", Mf.endpointAPI+"/v1/org/"+Mf.orgID+"/project/"+projectID, Mf.apiToken, nil, customDebug)
+func getProjectDetails(orgID string, Mf MandatoryFlags, projectID string, customDebug debug) (jsn.Json, error) {
+	responseData, err := makeSnykAPIRequest("GET", Mf.endpointAPI+"/v1/org/"+orgID+"/project/"+projectID, Mf.apiToken, nil, customDebug)
 	if err != nil {
 		log.Printf("*** ERROR *** Could not get the Project detail for endpoint %s\n", Mf.endpointAPI)
 		errorMessage := fmt.Sprintf("Failure, Could not get the Project detail for endpoint %s\n", Mf.endpointAPI)
