@@ -36,7 +36,7 @@ func getRepos(region string, profile string) (map[string]Repo, error) {
 	}
 	cfg, err := config.LoadDefaultConfig(ctx, cfgRegion, cfgProfile)
 	if err != nil {
-		log.Fatalf("Unable to load SDK config, %v", err)
+		log.Fatalf("Unable to load SDK config, %v\n", err)
 		return nil, err
 	}
 
@@ -46,9 +46,10 @@ func getRepos(region string, profile string) (map[string]Repo, error) {
 		TableName: aws.String(REPO_TABLE_NAME),
 	})
 	if err != nil {
-		log.Fatalf("failed to list items from '%s', %v", REPO_TABLE_NAME, err)
+		log.Fatalf("*** ERROR *** Failed to list items from '%s', %v", REPO_TABLE_NAME, err)
 		return nil, err
 	}
+	log.Printf("*** INFO *** Got %d items from '%s'", len(resp.Items), REPO_TABLE_NAME)
 
 	var pRepos []Repo
 	err = attributevalue.UnmarshalListOfMaps(resp.Items, &pRepos)
@@ -60,8 +61,8 @@ func getRepos(region string, profile string) (map[string]Repo, error) {
 	// create a map indexed by full repo name
 	m := make(map[string]Repo)
 	for _, r := range pRepos {
-		if (r.TeamOwner != "none") || (r.TeamOwner == "") {
-			m["https://github.com/"+r.Org+"/"+r.Name] = r
+		if r.TeamOwner != "none" {
+			m[r.Org+"/"+r.Name] = r
 		}
 	}
 	return m, nil
