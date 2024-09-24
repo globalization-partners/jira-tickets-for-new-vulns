@@ -25,13 +25,13 @@ func TestSetOptionFunc(t *testing.T) {
 	options.setOption(args)
 
 	mandatoryResult := &MandatoryFlags{
-		orgID:         "0e9373a6-f858-11ec-b939-0242ac120002",
 		apiToken:      "123",
 		jiraProjectID: "15698",
 		endpointAPI:   "https://api.snyk.io",
 	}
 
 	optionalResult := &optionalFlags{
+		orgID:                  "0e9373a6-f858-11ec-b939-0242ac120002",
 		assigneeID:             "1238769",
 		debug:                  false,
 		dryRun:                 false,
@@ -73,13 +73,13 @@ func TestSetOptionMixFunc(t *testing.T) {
 	options.setOption(args)
 
 	mandatoryResult := &MandatoryFlags{
-		orgID:         "0e9373a6-f858-11ec-b939-0242ac120002",
 		apiToken:      "123",
 		jiraProjectID: "15699",
 		endpointAPI:   "http://api.snyk.io",
 	}
 
 	optionalResult := &optionalFlags{
+		orgID:                  "0e9373a6-f858-11ec-b939-0242ac120002",
 		assigneeID:             "654",
 		debug:                  false,
 		dryRun:                 false,
@@ -117,13 +117,13 @@ func TestSetOption(t *testing.T) {
 	options.setOption(os.Args)
 
 	mandatoryResult := &MandatoryFlags{
-		orgID:         "123",
 		apiToken:      "123",
 		jiraProjectID: "123",
 		endpointAPI:   "https://test.com",
 	}
 
 	optionalResult := &optionalFlags{
+		orgID:                  "123",
 		assigneeID:             "1238769",
 		debug:                  false,
 		dryRun:                 false,
@@ -166,13 +166,13 @@ func TestSetOptionWithCustomMandatoryField(t *testing.T) {
 	options.setOption(os.Args)
 
 	mandatoryResult := &MandatoryFlags{
-		orgID:         "123",
 		apiToken:      "123",
 		jiraProjectID: "123",
 		endpointAPI:   "https://test.com",
 	}
 
 	optionalResult := &optionalFlags{
+		orgID:                  "123",
 		assigneeID:             "1238769",
 		debug:                  false,
 		dryRun:                 false,

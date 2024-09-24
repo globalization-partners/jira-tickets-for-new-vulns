@@ -28,7 +28,6 @@ func TestOpenJiraTicketFunc(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
@@ -36,6 +35,7 @@ func TestOpenJiraTicketFunc(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.severity = ""
 	Of.priorityScoreThreshold = 0
 	Of.issueType = ""
@@ -83,7 +83,6 @@ func TestOpenJiraTicketWithProjectKeyFunc(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = ""
@@ -91,6 +90,7 @@ func TestOpenJiraTicketWithProjectKeyFunc(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.severity = ""
 	Of.priorityScoreThreshold = 0
 	Of.issueType = ""
@@ -138,7 +138,6 @@ func TestOpenJiraTicketErrorAndRetryFunc(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
@@ -146,6 +145,7 @@ func TestOpenJiraTicketErrorAndRetryFunc(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.severity = ""
 	Of.priorityScoreThreshold = 0
 	Of.issueType = ""
@@ -197,7 +197,6 @@ func TestOpenJiraMultipleTicketsErrorAndRetryFunc(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
@@ -205,6 +204,7 @@ func TestOpenJiraMultipleTicketsErrorAndRetryFunc(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.severity = ""
 	Of.priorityScoreThreshold = 0
 	Of.issueType = ""
@@ -272,7 +272,6 @@ func TestOpenJiraMultipleTicketsErrorAndRetryAndFailFunc(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
@@ -280,6 +279,7 @@ func TestOpenJiraMultipleTicketsErrorAndRetryAndFailFunc(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.severity = ""
 	Of.priorityScoreThreshold = 0
 	Of.issueType = ""
@@ -348,7 +348,6 @@ func TestOpenJiraMultipleTicketsFailureFunc(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
@@ -356,6 +355,7 @@ func TestOpenJiraMultipleTicketsFailureFunc(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.severity = ""
 	Of.priorityScoreThreshold = 0
 	Of.issueType = ""
@@ -424,7 +424,6 @@ func TestOpenJiraTicketWithAssigneeIDFunc(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
@@ -432,6 +431,7 @@ func TestOpenJiraTicketWithAssigneeIDFunc(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.severity = ""
 	Of.priorityScoreThreshold = 0
 	Of.issueType = ""
@@ -490,7 +490,6 @@ func TestOpenJiraTicketDryRun(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
@@ -498,6 +497,7 @@ func TestOpenJiraTicketDryRun(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.severity = ""
 	Of.priorityScoreThreshold = 0
 	Of.issueType = ""
@@ -549,7 +549,6 @@ func TestOpenJiraMultipleTicketsIsUpgradableFunc(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
@@ -557,6 +556,7 @@ func TestOpenJiraMultipleTicketsIsUpgradableFunc(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.severity = ""
 	Of.priorityScoreThreshold = 0
 	Of.issueType = ""
@@ -625,7 +625,6 @@ func TestOpenJiraMultipleTicketsifAutoFixableOnlyFunc(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
@@ -633,6 +632,7 @@ func TestOpenJiraMultipleTicketsifAutoFixableOnlyFunc(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.severity = ""
 	Of.priorityScoreThreshold = 0
 	Of.issueType = ""
@@ -701,7 +701,6 @@ func TestOpenJiraSingleTicketIfAutoFixableOnlyFunc(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
@@ -709,6 +708,7 @@ func TestOpenJiraSingleTicketIfAutoFixableOnlyFunc(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.severity = ""
 	Of.priorityScoreThreshold = 0
 	Of.issueType = ""
@@ -778,7 +778,6 @@ func TestOpenJiraTicketDryRyn(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
@@ -786,6 +785,7 @@ func TestOpenJiraTicketDryRyn(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.severity = ""
 	Of.priorityScoreThreshold = 0
 	Of.issueType = ""
@@ -840,7 +840,6 @@ func TestOpenJiraTicketDryRunifAutoFixableOnly(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
@@ -848,6 +847,7 @@ func TestOpenJiraTicketDryRunifAutoFixableOnly(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.severity = ""
 	Of.priorityScoreThreshold = 0
 	Of.issueType = ""
@@ -1004,7 +1004,6 @@ func TestOpenJiraTicketError50xAndRetryFunc(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
@@ -1012,6 +1011,7 @@ func TestOpenJiraTicketError50xAndRetryFunc(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.severity = ""
 	Of.priorityScoreThreshold = 0
 	Of.issueType = ""
@@ -1064,7 +1064,6 @@ func TestOpenJiraTicketWithDueDateFunc(t *testing.T) {
 
 	// setting mandatory options
 	Mf := MandatoryFlags{}
-	Mf.orgID = "123"
 	Mf.endpointAPI = server.URL
 	Mf.apiToken = "123"
 	Mf.jiraProjectID = "123"
@@ -1072,6 +1071,7 @@ func TestOpenJiraTicketWithDueDateFunc(t *testing.T) {
 
 	// setting optional options
 	Of := optionalFlags{}
+	Of.orgID = "123"
 	Of.severity = ""
 	Of.priorityScoreThreshold = 0
 	Of.issueType = ""
