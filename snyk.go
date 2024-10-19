@@ -18,6 +18,7 @@ var ORGS = map[string]string{
 	"Nova":                 "d871051b-e7fc-4c7b-b590-73482b3c3fb1",
 	"Platform":             "b7ac3f09-0ca7-435a-96f2-012c0cc57a45",
 	"Product Integrations": "d85b4772-a027-40d6-9d9a-6454461f3921",
+	"Wordpress":            "3cdadf0a-1b0a-4074-8b75-c47f940e0b01",
 }
 
 func getOrgIds(flags flags, customDebug debug) (map[string]string, error) {
