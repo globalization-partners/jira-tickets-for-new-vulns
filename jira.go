@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/michael-go/go-jsn/jsn"
 )
@@ -31,7 +32,7 @@ type Field struct {
 	Assignees   *Assignee     `json:"assignee,omitempty"`
 	Priority    *PriorityType `json:"priority,omitempty"`
 	Labels      []string      `json:"labels,omitempty"`
-	DueDate     string        `json:"duedate,omitempty"`
+	DueDate     string        `json:"customfield_10074,omitempty"`
 	FeatureTeam []CustomField `json:"customfield_10354,omitempty"`
 }
 
@@ -150,6 +151,22 @@ func openJiraTicket(flags flags, projectInfo jsn.Json, vulnForJira interface{}, 
 		jiraTicket.Fields.Labels = strings.Split(flags.optionalFlags.labels, ",")
 	}
 
+	severity := jsonVuln.K("issueData").K("severity").String().Value
+	if issueType == "code" {
+		severity = jsonVuln.K("data").K("attributes").K("severity").String().Value
+	}
+	today := time.Now()
+	if severity == "critical" {
+		today = today.AddDate(0, 0, 30)
+	} else if severity == "high" {
+		today = today.AddDate(0, 0, 180)
+	} else if severity == "medium" {
+		today = today.AddDate(0, 0, 360)
+	} else if severity == "low" {
+		today = today.AddDate(0, 0, 720)
+	}
+	jiraTicket.Fields.DueDate = today.Format("2006-01-02")
+
 	if flags.optionalFlags.dueDate != "" {
 		jiraTicket.Fields.DueDate = flags.optionalFlags.dueDate
 	}
@@ -162,11 +179,6 @@ func openJiraTicket(flags flags, projectInfo jsn.Json, vulnForJira interface{}, 
 
 	if flags.optionalFlags.priorityIsSeverity {
 		var priority PriorityType
-
-		severity := jsonVuln.K("issueData").K("severity").String().Value
-		if issueType == "code" {
-			severity = jsonVuln.K("data").K("attributes").K("severity").String().Value
-		}
 
 		jiraMappingEnvVarName := fmt.Sprintf("SNYK_JIRA_PRIORITY_FOR_%s_VULN", strings.ToUpper(severity))
 		val, present := os.LookupEnv(jiraMappingEnvVarName)
