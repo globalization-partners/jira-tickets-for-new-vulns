@@ -2,14 +2,17 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
+	"net/url"
 	"os"
 	"strings"
 	"time"
 
+	jira_cloud "github.com/andygrunwald/go-jira/v2/cloud"
 	"github.com/michael-go/go-jsn/jsn"
 )
 
@@ -56,6 +59,32 @@ type Project struct {
 // IssueType is type of Bug|Epic|Task
 type IssueType struct {
 	Name string `json:"name"`
+}
+
+func getJiraClient() *jira_cloud.Client {
+	jiraURL := "https://globalization-partners.atlassian.net/"
+	tp := jira_cloud.BasicAuthTransport{
+		Username: os.Getenv("SENTINEL_JIRA_USER"),
+		APIToken: os.Getenv("SENTINEL_JIRA_TOKEN"),
+	}
+	client, err := jira_cloud.NewClient(jiraURL, tp.Client())
+	if err != nil {
+		panic(err)
+	}
+	return client
+}
+
+func getJiraUserId(client *jira_cloud.Client, username string) (string, error) {
+	users, _, err := client.User.Find(context.Background(), url.PathEscape(username))
+	if err != nil {
+		return "", err
+	}
+	for _, user := range users {
+		if username == user.DisplayName {
+			return user.AccountID, nil
+		}
+	}
+	return "", err
 }
 
 func getJiraTickets(orgID string, Mf MandatoryFlags, projectID string, customDebug debug) (map[string]string, error) {
@@ -172,9 +201,14 @@ func openJiraTicket(flags flags, projectInfo jsn.Json, vulnForJira interface{}, 
 	}
 
 	if flags.optionalFlags.assigneeID != "" {
-		var assignee Assignee
-		assignee.AccountId = flags.optionalFlags.assigneeID
-		jiraTicket.Fields.Assignees = &assignee
+		jiraTicket.Fields.Assignees = &Assignee{
+			AccountId: flags.optionalFlags.assigneeID,
+		}
+	} else {
+		log.Println("*** DEBUG *** Assignee ID is empty, using Jira user ID: ", repo)
+		jiraTicket.Fields.Assignees = &Assignee{
+			AccountId: repo.JiraUserId,
+		}
 	}
 
 	if flags.optionalFlags.priorityIsSeverity {

@@ -124,13 +124,31 @@ func main() {
 	filenameNotCreated := CreateLogFile(customDebug, "ErrorsFile_")
 
 	// Get appsec cmdb
-	log.Println(options.optionalFlags.dynamoRegion)
 	repoMap, er := getRepos(options.optionalFlags.dynamoRegion, options.optionalFlags.dynamoProfile)
 	if er != nil {
 		log.Println("*** ERROR *** Could not retieve repos from AppSec CMDB")
 		log.Fatal(er)
 	}
 	log.Printf("*** INFO *** Retrieved %d repos from AppSec CMDB", len(repoMap))
+
+	// Get Jira user IDs for all managers for later use
+	client := getJiraClient()
+	cache := map[string]string{}
+	log.Println("*** INFO *** Getting Jira user IDs for all managers")
+	for x, repo := range repoMap {
+		jiraUserId, ok := cache[repo.Manager]
+		if ok {
+			repo.JiraUserId = jiraUserId
+			repoMap[x] = repo
+			continue
+		}
+		repo.JiraUserId, er = getJiraUserId(client, repo.Manager)
+		if er != nil {
+			log.Println("*** ERROR *** Could not retrieve Jira user ID for manager ", repo.Manager)
+		}
+		repoMap[x] = repo
+		cache[repo.Manager] = repo.JiraUserId
+	}
 
 	// Get all orgs and do the rest of main for each org
 	orgIDs, err := getOrgIds(options, customDebug)
