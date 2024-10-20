@@ -17,6 +17,7 @@ type Repo struct {
 	Manager     string `dynamodbav:"manager"`
 	TeamOwner   string `dynamodbav:"team_owner"`
 	Name        string `dynamidbav:"name"`
+	JiraUserId  string
 }
 
 const REPO_TABLE_NAME = "gpp-prod-repos"

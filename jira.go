@@ -2,13 +2,17 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
+	"net/url"
 	"os"
 	"strings"
+	"time"
 
+	jira_cloud "github.com/andygrunwald/go-jira/v2/cloud"
 	"github.com/michael-go/go-jsn/jsn"
 )
 
@@ -31,7 +35,7 @@ type Field struct {
 	Assignees   *Assignee     `json:"assignee,omitempty"`
 	Priority    *PriorityType `json:"priority,omitempty"`
 	Labels      []string      `json:"labels,omitempty"`
-	DueDate     string        `json:"duedate,omitempty"`
+	DueDate     string        `json:"customfield_10074,omitempty"`
 	FeatureTeam []CustomField `json:"customfield_10354,omitempty"`
 }
 
@@ -55,6 +59,32 @@ type Project struct {
 // IssueType is type of Bug|Epic|Task
 type IssueType struct {
 	Name string `json:"name"`
+}
+
+func getJiraClient() *jira_cloud.Client {
+	jiraURL := "https://globalization-partners.atlassian.net/"
+	tp := jira_cloud.BasicAuthTransport{
+		Username: os.Getenv("SENTINEL_JIRA_USER"),
+		APIToken: os.Getenv("SENTINEL_JIRA_TOKEN"),
+	}
+	client, err := jira_cloud.NewClient(jiraURL, tp.Client())
+	if err != nil {
+		panic(err)
+	}
+	return client
+}
+
+func getJiraUserId(client *jira_cloud.Client, username string) (string, error) {
+	users, _, err := client.User.Find(context.Background(), url.PathEscape(username))
+	if err != nil {
+		return "", err
+	}
+	for _, user := range users {
+		if username == user.DisplayName {
+			return user.AccountID, nil
+		}
+	}
+	return "", err
 }
 
 func getJiraTickets(orgID string, Mf MandatoryFlags, projectID string, customDebug debug) (map[string]string, error) {
@@ -150,23 +180,39 @@ func openJiraTicket(flags flags, projectInfo jsn.Json, vulnForJira interface{}, 
 		jiraTicket.Fields.Labels = strings.Split(flags.optionalFlags.labels, ",")
 	}
 
+	severity := jsonVuln.K("issueData").K("severity").String().Value
+	if issueType == "code" {
+		severity = jsonVuln.K("data").K("attributes").K("severity").String().Value
+	}
+	today := time.Now()
+	if severity == "critical" {
+		today = today.AddDate(0, 0, 30)
+	} else if severity == "high" {
+		today = today.AddDate(0, 0, 180)
+	} else if severity == "medium" {
+		today = today.AddDate(0, 0, 360)
+	} else if severity == "low" {
+		today = today.AddDate(0, 0, 720)
+	}
+	jiraTicket.Fields.DueDate = today.Format("2006-01-02")
+
 	if flags.optionalFlags.dueDate != "" {
 		jiraTicket.Fields.DueDate = flags.optionalFlags.dueDate
 	}
 
 	if flags.optionalFlags.assigneeID != "" {
-		var assignee Assignee
-		assignee.AccountId = flags.optionalFlags.assigneeID
-		jiraTicket.Fields.Assignees = &assignee
+		jiraTicket.Fields.Assignees = &Assignee{
+			AccountId: flags.optionalFlags.assigneeID,
+		}
+	} else {
+		log.Println("*** DEBUG *** Assignee ID is empty, using Jira user ID: ", repo)
+		jiraTicket.Fields.Assignees = &Assignee{
+			AccountId: repo.JiraUserId,
+		}
 	}
 
 	if flags.optionalFlags.priorityIsSeverity {
 		var priority PriorityType
-
-		severity := jsonVuln.K("issueData").K("severity").String().Value
-		if issueType == "code" {
-			severity = jsonVuln.K("data").K("attributes").K("severity").String().Value
-		}
 
 		jiraMappingEnvVarName := fmt.Sprintf("SNYK_JIRA_PRIORITY_FOR_%s_VULN", strings.ToUpper(severity))
 		val, present := os.LookupEnv(jiraMappingEnvVarName)
